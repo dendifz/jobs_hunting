@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jobs_hunting/pages/onboarding_page.dart';
+import 'package:jobs_hunting/pages/signin_page.dart';
+import 'package:jobs_hunting/pages/signup_page.dart';
 import 'package:jobs_hunting/pages/splash_page.dart';
 
 void main() {
@@ -17,6 +19,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const SplashPage(),
         '/onboarding': (context) => const OnboardingPage(),
+        '/sign-in': (context) => const SignInPage(),
+        '/sign-up': (context) => const SignUpPage(),
       },
     );
   }

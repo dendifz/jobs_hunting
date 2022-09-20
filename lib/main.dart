@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jobs_hunting/pages/home_page.dart';
 import 'package:jobs_hunting/pages/onboarding_page.dart';
+import 'package:jobs_hunting/pages/second_home_page.dart';
 import 'package:jobs_hunting/pages/signin_page.dart';
 import 'package:jobs_hunting/pages/signup_page.dart';
 import 'package:jobs_hunting/pages/splash_page.dart';

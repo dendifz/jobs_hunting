@@ -47,98 +47,96 @@ class HomePage extends StatelessWidget {
     }
 
     Widget body() {
-      return Container(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 30, left: 24, right: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Hot Categories',
-                style: blackTextStyle.copyWith(
-                  fontSize: 16,
-                  fontWeight: regular,
-                ),
+      return Padding(
+        padding: const EdgeInsets.only(top: 30, left: 24, right: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Hot Categories',
+              style: blackTextStyle.copyWith(
+                fontSize: 16,
+                fontWeight: regular,
               ),
-              const SizedBox(
-                height: 16,
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: const [
-                    JobCard(
-                      imageUrl: 'assets/image_category1.png',
-                      imageDesc: 'Website Developer',
-                    ),
-                    SizedBox(
-                      width: 16,
-                    ),
-                    JobCard(
-                      imageUrl: 'assets/image_category2.png',
-                      imageDesc: 'Mobile Developer',
-                    ),
-                    SizedBox(
-                      width: 16,
-                    ),
-                    JobCard(
-                      imageUrl: 'assets/image_category3.png',
-                      imageDesc: 'App Designer',
-                    ),
-                    SizedBox(
-                      width: 16,
-                    ),
-                    JobCard(
-                      imageUrl: 'assets/image_category4.png',
-                      imageDesc: 'Content Writter',
-                    ),
-                    SizedBox(
-                      width: 16,
-                    ),
-                    JobCard(
-                      imageUrl: 'assets/image_category5.png',
-                      imageDesc: 'Video Grapher',
-                    ),
-                    SizedBox(
-                      width: 16,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Text(
-                'Just Posted',
-                style: blackTextStyle.copyWith(
-                  fontSize: 16,
-                  fontWeight: regular,
-                ),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              Column(
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
                 children: const [
-                  CustomList(
-                    jobTitle: 'Front End Developer',
-                    jobCompany: 'Google',
-                    imageUrl: 'assets/icon_google.png',
+                  JobCard(
+                    imageUrl: 'assets/image_category1.png',
+                    imageDesc: 'Website Developer',
                   ),
-                  CustomList(
-                    jobTitle: 'UI Designer',
-                    jobCompany: 'Instagram',
-                    imageUrl: 'assets/icon_instagram.png',
+                  SizedBox(
+                    width: 16,
                   ),
-                  CustomList(
-                    jobTitle: 'Data Scientist',
-                    jobCompany: 'Facebook',
-                    imageUrl: 'assets/icon_facebook.png',
+                  JobCard(
+                    imageUrl: 'assets/image_category2.png',
+                    imageDesc: 'Mobile Developer',
+                  ),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  JobCard(
+                    imageUrl: 'assets/image_category3.png',
+                    imageDesc: 'App Designer',
+                  ),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  JobCard(
+                    imageUrl: 'assets/image_category4.png',
+                    imageDesc: 'Content Writter',
+                  ),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  JobCard(
+                    imageUrl: 'assets/image_category5.png',
+                    imageDesc: 'Video Grapher',
+                  ),
+                  SizedBox(
+                    width: 16,
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            Text(
+              'Just Posted',
+              style: blackTextStyle.copyWith(
+                fontSize: 16,
+                fontWeight: regular,
+              ),
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            Column(
+              children: const [
+                CustomList(
+                  jobTitle: 'Front End Developer',
+                  jobCompany: 'Google',
+                  imageUrl: 'assets/icon_google.png',
+                ),
+                CustomList(
+                  jobTitle: 'UI Designer',
+                  jobCompany: 'Instagram',
+                  imageUrl: 'assets/icon_instagram.png',
+                ),
+                CustomList(
+                  jobTitle: 'Data Scientist',
+                  jobCompany: 'Facebook',
+                  imageUrl: 'assets/icon_facebook.png',
+                ),
+              ],
+            ),
+          ],
         ),
       );
     }
@@ -169,6 +167,12 @@ class HomePage extends StatelessWidget {
             ),
             BottomNavigationBarItem(
               icon: ImageIcon(
+                AssetImage('assets/icon_love.png'),
+              ),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: ImageIcon(
                 AssetImage('assets/icon_user.png'),
               ),
               label: '',
@@ -176,12 +180,14 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          header(),
-          body(),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            header(),
+            body(),
+          ],
+        ),
       ),
     );
   }

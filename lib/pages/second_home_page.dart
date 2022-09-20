@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:jobs_hunting/theme.dart';
 import 'package:jobs_hunting/widgets/custom_list.dart';
+import 'package:provider/provider.dart';
+
+import '../models/job_model.dart';
+import '../providers/job_provider.dart';
 
 class SecondHomePage extends StatelessWidget {
   const SecondHomePage({Key? key, required this.jobTitle, required this.urlImage}) : super(key: key);
@@ -10,6 +14,9 @@ class SecondHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    var jobProvider = Provider.of<JobProvider>(context);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -26,7 +33,7 @@ class SecondHomePage extends StatelessWidget {
                     child: Container(
                       width: double.infinity,
                       height: 270,
-                      child: Image.asset(
+                      child: Image.network(
                         urlImage,
                         fit: BoxFit.cover,
                       ),
@@ -89,60 +96,22 @@ class SecondHomePage extends StatelessWidget {
                     const SizedBox(
                       height: 16,
                     ),
-                    const CustomList(
-                      jobTitle: 'Front-End Developer',
-                      jobCompany: 'Google',
-                      imageUrl: 'assets/icon_google.png',
-                    ),
-                    const CustomList(
-                      jobTitle: 'UI Designer',
-                      jobCompany: 'Instagram',
-                      imageUrl: 'assets/icon_instagram.png',
-                    ),
-                    const CustomList(
-                      jobTitle: 'Data Scientist',
-                      jobCompany: 'Facebook',
-                      imageUrl: 'assets/icon_facebook.png',
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 24,
-                  right: 24,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Big Companies',
-                          style: blackTextStyle.copyWith(
-                            fontSize: 16,
-                            fontWeight: regular,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    const CustomList(
-                      jobTitle: 'Front-End Developer',
-                      jobCompany: 'Google',
-                      imageUrl: 'assets/icon_google.png',
-                    ),
-                    const CustomList(
-                      jobTitle: 'UI Designer',
-                      jobCompany: 'Instagram',
-                      imageUrl: 'assets/icon_instagram.png',
-                    ),
-                    const CustomList(
-                      jobTitle: 'Data Scientist',
-                      jobCompany: 'Facebook',
-                      imageUrl: 'assets/icon_facebook.png',
+                    FutureBuilder<List<JobModel>>(
+                        future: jobProvider.getJobsbyCategory(jobTitle),
+                        builder: (context, snapshot) {
+
+                          if(snapshot.connectionState == ConnectionState.done){
+                            return Column(
+                              children: snapshot.data!.map((e) => CustomList(
+                                  job : e
+                              )).toList(),
+                            );
+                          }else{
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        }
                     ),
                   ],
                 ),

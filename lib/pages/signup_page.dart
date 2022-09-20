@@ -1,6 +1,10 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:jobs_hunting/models/user_model.dart';
+import 'package:jobs_hunting/providers/user_provider.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/auth_provider.dart';
 import '../theme.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -15,16 +19,28 @@ class _SignUpPageState extends State<SignUpPage> {
   bool isPasswordValid = false;
   bool isNameValid = false;
   bool isGoalValid = false;
-
   bool isChangeImage = false;
+  bool isLoading = false;
 
-  TextEditingController emailController = TextEditingController(text: '');
-  TextEditingController passController = TextEditingController(text: '');
-  TextEditingController nameController = TextEditingController(text: '');
-  TextEditingController goalController = TextEditingController(text: '');
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController goalController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    var authProvider = Provider.of<AuthProvider>(context);
+    var userProvider = Provider.of<UserProvider>(context);
+
+    void showMessage(String message) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: redColor,
+          content: Text(message),
+        ),
+      );
+    }
+
     return Scaffold(
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -76,7 +92,9 @@ class _SignUpPageState extends State<SignUpPage> {
                             }
                           },
                           child: Image.asset(
-                            isChangeImage ? 'assets/icon_upload.png' : 'assets/image_profile.png',
+                            isChangeImage
+                                ? 'assets/icon_upload.png'
+                                : 'assets/image_profile.png',
                             width: 120,
                             height: 120,
                           ),
@@ -112,8 +130,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(100),
                       borderSide: BorderSide(
-                          color:
-                          isNameValid ? primaryColor : redColor),
+                          color: isNameValid ? primaryColor : redColor),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(100),
@@ -226,7 +243,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     filled: true,
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(100),
-                      borderSide: BorderSide(color: isGoalValid ? primaryColor : redColor),
+                      borderSide: BorderSide(
+                          color: isGoalValid ? primaryColor : redColor),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(100),
@@ -242,25 +260,68 @@ class _SignUpPageState extends State<SignUpPage> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
                   height: 45,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: const Color(0xff4141A4),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(66),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/profile');
-                    },
-                    child: Text(
-                      'Sign Up',
-                      style: blackTextStyle.copyWith(
-                        fontSize: 18,
-                        fontWeight: medium,
-                        color: whiteColor,
-                      ),
-                    ),
-                  ),
+                  child: isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : TextButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor: const Color(0xff4141A4),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(66),
+                            ),
+                          ),
+                          onPressed: () async {
+                            if (isNameValid &&
+                                isEmailValid &&
+                                isPasswordValid &&
+                                isGoalValid) {
+                              setState(() {
+                                isLoading = true;
+                              });
+
+                              UserModel? user = await authProvider.register(
+                                emailController.text,
+                                passController.text,
+                                nameController.text,
+                                goalController.text,
+                              );
+
+                              setState(() {
+                                isLoading = false;
+                              });
+
+                              if (user == null) {
+                                showMessage('Register Failed');
+                              } else {
+                                userProvider.user = user;
+                                Navigator.pushNamedAndRemoveUntil(
+                                    context, '/home', (route) => false);
+                              }
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: redColor,
+                                  content: Text(
+                                    'Please fill all the fields',
+                                    style: whiteTextStyle.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: regular,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          child: Text(
+                            'Sign Up',
+                            style: blackTextStyle.copyWith(
+                              fontSize: 18,
+                              fontWeight: medium,
+                              color: whiteColor,
+                            ),
+                          ),
+                        ),
                 ),
                 const SizedBox(
                   height: 20,

@@ -1,6 +1,11 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:jobs_hunting/theme.dart';
+import 'package:provider/provider.dart';
+
+import '../models/user_model.dart';
+import '../providers/auth_provider.dart';
+import '../providers/user_provider.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -12,12 +17,25 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   bool isEmailValid = false;
   bool isPasswordValid = false;
+  bool isLoading = false;
 
-  TextEditingController emailController = TextEditingController(text: '');
-  TextEditingController passController = TextEditingController(text: '');
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    var authProvider = Provider.of<AuthProvider>(context);
+    var userProvider = Provider.of<UserProvider>(context);
+
+    void showMessage(String message) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: redColor,
+          content: Text(message),
+        ),
+      );
+    }
+
     return Scaffold(
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -120,7 +138,8 @@ class _SignInPageState extends State<SignInPage> {
                     filled: true,
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(100),
-                      borderSide: BorderSide(color: isPasswordValid ? primaryColor : redColor),
+                      borderSide: BorderSide(
+                          color: isPasswordValid ? primaryColor : redColor),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(100),
@@ -136,25 +155,47 @@ class _SignInPageState extends State<SignInPage> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
                   height: 45,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: const Color(0xff4141A4),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(66),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/home');
-                    },
-                    child: Text(
-                      'Sign In',
-                      style: blackTextStyle.copyWith(
-                        fontSize: 18,
-                        fontWeight: medium,
-                        color: whiteColor,
-                      ),
-                    ),
-                  ),
+                  child: isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : TextButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor: const Color(0xff4141A4),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(66),
+                            ),
+                          ),
+                          onPressed: () async {
+                            if (isEmailValid && isPasswordValid) {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              UserModel? user = await authProvider.login(
+                                  emailController.text, passController.text);
+                              if (user == null) {
+                                showMessage('Email or Password Wrong');
+                              } else {
+                                userProvider.user = user;
+                                Navigator.pushNamedAndRemoveUntil(
+                                    context, '/home', (route) => false);
+                              }
+                              setState(() {
+                                isLoading = false;
+                              });
+                            } else {
+                              showMessage('Please fill all fields');
+                            }
+                          },
+                          child: Text(
+                            'Sign In',
+                            style: blackTextStyle.copyWith(
+                              fontSize: 18,
+                              fontWeight: medium,
+                              color: whiteColor,
+                            ),
+                          ),
+                        ),
                 ),
                 const SizedBox(
                   height: 20,

@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:jobs_hunting/models/job_model.dart';
 import 'package:jobs_hunting/pages/detail_page.dart';
 
 import '../theme.dart';
 
 class CustomList extends StatelessWidget {
-  const CustomList(
-      {Key? key,
-      required this.jobTitle,
-      required this.jobCompany,
-      required this.imageUrl})
-      : super(key: key);
 
-  final String jobTitle;
-  final String jobCompany;
-  final String imageUrl;
+  JobModel job;
+
+  CustomList({
+    required this.job
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +20,7 @@ class CustomList extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => DetailPage(
-              jobTitle: jobTitle,
-              urlImage: imageUrl,
-              jobCompany: jobCompany,
+              job: job
             ),
           ),
         );
@@ -33,8 +28,8 @@ class CustomList extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset(
-            imageUrl,
+          Image.network(
+            job.companyLogo!,
             width: 45,
             height: 45,
           ),
@@ -46,14 +41,14 @@ class CustomList extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  jobTitle,
+                  job.name!,
                   style: blackTextStyle.copyWith(
                     fontSize: 16,
                     fontWeight: medium,
                   ),
                 ),
                 Text(
-                  jobCompany,
+                  job.companyName!,
                   style: greyTextStyle.copyWith(
                     fontSize: 14,
                     fontWeight: regular,

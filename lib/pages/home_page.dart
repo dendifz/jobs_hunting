@@ -1,7 +1,13 @@
 import "package:flutter/material.dart";
+import 'package:jobs_hunting/models/category_model.dart';
+import 'package:jobs_hunting/models/job_model.dart';
+import 'package:jobs_hunting/providers/category_provider.dart';
+import 'package:jobs_hunting/providers/user_provider.dart';
 import 'package:jobs_hunting/widgets/custom_list.dart';
 import 'package:jobs_hunting/widgets/job_card.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/job_provider.dart';
 import '../theme.dart';
 
 class HomePage extends StatelessWidget {
@@ -9,6 +15,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var userProvider = Provider.of<UserProvider>(context);
+    var categoryProvider = Provider.of<CategoryProvider>(context);
+    var jobProvider = Provider.of<JobProvider>(context);
+
     Widget header() {
       return SafeArea(
         child: Container(
@@ -26,7 +36,7 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Mr. Dendi',
+                    'Mr. ${userProvider.user.name}',
                     style: blackTextStyle.copyWith(
                       fontSize: 24,
                       fontWeight: semiBold,
@@ -62,47 +72,28 @@ class HomePage extends StatelessWidget {
             const SizedBox(
               height: 16,
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: const [
-                  JobCard(
-                    imageUrl: 'assets/image_category1.png',
-                    imageDesc: 'Website Developer',
-                  ),
-                  SizedBox(
-                    width: 16,
-                  ),
-                  JobCard(
-                    imageUrl: 'assets/image_category2.png',
-                    imageDesc: 'Mobile Developer',
-                  ),
-                  SizedBox(
-                    width: 16,
-                  ),
-                  JobCard(
-                    imageUrl: 'assets/image_category3.png',
-                    imageDesc: 'App Designer',
-                  ),
-                  SizedBox(
-                    width: 16,
-                  ),
-                  JobCard(
-                    imageUrl: 'assets/image_category4.png',
-                    imageDesc: 'Content Writter',
-                  ),
-                  SizedBox(
-                    width: 16,
-                  ),
-                  JobCard(
-                    imageUrl: 'assets/image_category5.png',
-                    imageDesc: 'Video Grapher',
-                  ),
-                  SizedBox(
-                    width: 16,
-                  ),
-                ],
-              ),
+            Container(
+              height: 200,
+              child: FutureBuilder<List<CategoryModel>>(
+                  future: categoryProvider.getCategories(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return ListView(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.only(right: 24),
+                        children: snapshot.data!
+                            .map((e) => JobCard(
+                                  imageUrl: e.imageUrl,
+                                  imageDesc: e.name,
+                                ))
+                            .toList(),
+                      );
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  }),
             ),
             const SizedBox(
               height: 30,
@@ -117,24 +108,22 @@ class HomePage extends StatelessWidget {
             const SizedBox(
               height: 16,
             ),
-            Column(
-              children: const [
-                CustomList(
-                  jobTitle: 'Front End Developer',
-                  jobCompany: 'Google',
-                  imageUrl: 'assets/icon_google.png',
-                ),
-                CustomList(
-                  jobTitle: 'UI Designer',
-                  jobCompany: 'Instagram',
-                  imageUrl: 'assets/icon_instagram.png',
-                ),
-                CustomList(
-                  jobTitle: 'Data Scientist',
-                  jobCompany: 'Facebook',
-                  imageUrl: 'assets/icon_facebook.png',
-                ),
-              ],
+            FutureBuilder<List<JobModel>>(
+              future: jobProvider.getJobs(),
+              builder: (context, snapshot) {
+
+                if(snapshot.connectionState == ConnectionState.done){
+                  return Column(
+                    children: snapshot.data!.map((e) => CustomList(
+                      job : e
+                    )).toList(),
+                  );
+                }else{
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              }
             ),
           ],
         ),
